@@ -1,10 +1,10 @@
-def call(String appName) {
-    echo "Testing Docker container for ${appName}"
+def call() {
+    def imageTag = env.GIT_COMMIT
 
-    bat """
-    docker run -d --name ${appName}-test -p 8085:80 ${appName}:latest
-    timeout /t 5
-    docker ps | findstr ${appName}-test
-    docker rm -f ${appName}-test
+    sh """
+      docker rm -f portfolio-app-test || true
+      docker run -d --name portfolio-app-test -p 8085:80 udhaya2705/portfolio-app:${imageTag}
+      sleep 5
+      docker rm -f portfolio-app-test
     """
 }
