@@ -1,4 +1,15 @@
 def call(String appName) {
-    echo "Shared Library: Building ${appName}"
-    bat "echo Building ${appName} from shared library"
+    echo "Building Docker image for ${appName}"
+
+    withCredentials([usernamePassword(
+        credentialsId: 'dockerhub-creds',
+        usernameVariable: 'DOCKER_USER',
+        passwordVariable: 'DOCKER_PASS'
+    )]) {
+        bat """
+        echo %DOCKER_PASS% | docker login -u %DOCKER_USER% --password-stdin
+        docker build -t %DOCKER_USER%/${appName}:latest .
+        docker logout
+        """
+    }
 }
